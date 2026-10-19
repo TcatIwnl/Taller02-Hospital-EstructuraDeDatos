@@ -20,10 +20,10 @@ int main(int argc, char const *argv[])
         char* puntero = linea; //puntero que recorre la linea..
         char* inicioPalabra = linea; //se queda al principio sin avanzar..
 
-        string nombre;
-        string servicio;
-        string id;
-        int edad = 0;
+        //las nuevas variables del taller 2
+        string id, nombre, tipoDolor;
+        int edad = 0, presion = 0, dolor = 0, trauma = 0, sintomas = 0, cirugia = 0, dias = 0;
+        float temperatura = 0.0;
         int partes = 0;
 
         while (*puntero != '\0') //mientas no sea el final de la linea.. importante las '' es un caracter
@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
             {
                 *puntero = '\0'; //asi se corta la palabra
 
-                switch (partes) //switch porque soy un pro..
+                switch (partes)//solo hacemos mas largo el switch..
                 {
                 case 0:
                     id = inicioPalabra;
@@ -43,8 +43,29 @@ int main(int argc, char const *argv[])
                 case 2:
                     edad = stoi(inicioPalabra);
                     break;
+                case 3:
+                    temperatura = stof(inicioPalabra); // stof para float
+                    break;
+                case 4:
+                    presion = stoi(inicioPalabra);
+                    break;
+                case 5:
+                    dolor = stoi(inicioPalabra);
+                    break;
+                case 6:
+                    tipoDolor = inicioPalabra;
+                    break;
+                case 7:
+                    trauma = stoi(inicioPalabra);
+                    break;
+                case 8:
+                    sintomas = stoi(inicioPalabra);
+                    break;
+                case 9:
+                    cirugia = stoi(inicioPalabra);
+                    break;
                 default:
-                    cout<<"Algo salió mal.."<<endl;
+                    cout<<"Algo salió mal en el switch.."<<endl;
                     break;
                 }
 
@@ -55,9 +76,9 @@ int main(int argc, char const *argv[])
         
             
         }
-        servicio = inicioPalabra; //donde quedo el puntero al final.. ya que no tiene ;
+        dias = stoi(inicioPalabra);//donde quedo el puntero al final.. ya que no tiene ;
 
-        Paciente* nuevoPaciente = new Paciente(nombre,edad,id,servicio);
+        Paciente* nuevoPaciente = new Paciente(id, nombre, edad, temperatura, presion, dolor, tipoDolor, trauma, sintomas, cirugia, dias);
         filaPacientes.ingresar(nuevoPaciente);
     }
     archivo.close();
