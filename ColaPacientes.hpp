@@ -1,4 +1,5 @@
 #include "NodoCola.hpp"
+#include <string>
 #pragma once
 
 class ColaPacientes
@@ -14,4 +15,7 @@ public:
     Paciente* sacarPaciente();
     bool estaVacia();
     void mostrarCola();
+
+    Paciente* buscarPaciente(string id);
+    bool existePaciente(string id);
 };

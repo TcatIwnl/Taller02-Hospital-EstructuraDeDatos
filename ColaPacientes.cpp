@@ -74,3 +74,27 @@ void ColaPacientes::mostrarCola(){
     }
 }
 
+Paciente* ColaPacientes::buscarPaciente(string id)
+{
+    NodoCola* nodoActual = cabecera;
+
+    while (nodoActual != nullptr)
+    {
+        Paciente* pacienteActual = nodoActual->getPaciente();
+
+        if (pacienteActual->getId() == id)
+        {
+            return pacienteActual;
+        }
+
+        nodoActual = nodoActual->getSgte();
+    }
+
+    return nullptr;
+}
+
+bool ColaPacientes::existePaciente(string id)
+{
+    return buscarPaciente(id) != nullptr;
+}
+
