@@ -6,6 +6,43 @@
 #include "Hospital.hpp"
 using namespace std;
 
+bool convertirEntero(string texto, int& resultado)
+{
+    try
+    {
+        size_t caracteresLeidos = 0;
+        int numero = stoi(texto, &caracteresLeidos);
+
+        if (caracteresLeidos != texto.size())
+            return false;
+
+        resultado = numero;
+        return true;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+bool convertirDecimal(string texto, float& resultado)
+{
+    try
+    {
+        size_t caracteresLeidos = 0;
+        float numero = stof(texto, &caracteresLeidos);
+
+        if (caracteresLeidos != texto.size())
+            return false;
+
+        resultado = numero;
+        return true;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
 
 int main(int argc, char const *argv[])
 {
@@ -26,6 +63,38 @@ int main(int argc, char const *argv[])
         float temperatura = 0.0;
         int partes = 0;
 
+        bool lineaValida = true;
+        int separadores = 0;
+        bool campoConContenido = false;
+
+        for (char* revisar = linea; ; revisar++)
+        {
+            if (*revisar == ';' || *revisar == '\0')
+            {
+                if (!campoConContenido)
+                    lineaValida = false;
+
+                if (*revisar == '\0')
+                    break;
+
+                separadores++;
+                campoConContenido = false;
+            }
+            else if (*revisar != ' ' && *revisar != '\t' && *revisar != '\r')
+            {
+                campoConContenido = true;
+            }
+        }
+
+        if (separadores != 10)
+            lineaValida = false;
+
+        if (!lineaValida)
+        {
+            cout << "Linea invalida ignorada: formato incorrecto." << endl;
+            continue;
+        }
+
         while (*puntero != '\0') //mientas no sea el final de la linea.. importante las '' es un caracter
         {
             if (*puntero == ';')
@@ -41,31 +110,38 @@ int main(int argc, char const *argv[])
                     nombre = inicioPalabra;
                     break;
                 case 2:
-                    edad = stoi(inicioPalabra);
+                    if (!convertirEntero(inicioPalabra, edad))
+                        lineaValida = false;
                     break;
                 case 3:
-                    temperatura = stof(inicioPalabra); // stof para float
+                    if (!convertirDecimal(inicioPalabra, temperatura))
+                        lineaValida = false;
                     break;
                 case 4:
-                    presion = stoi(inicioPalabra);
+                    if (!convertirEntero(inicioPalabra, presion))
+                        lineaValida = false;
                     break;
                 case 5:
-                    dolor = stoi(inicioPalabra);
+                    if (!convertirEntero(inicioPalabra, dolor))
+                        lineaValida = false;
                     break;
                 case 6:
                     tipoDolor = inicioPalabra;
                     break;
                 case 7:
-                    trauma = stoi(inicioPalabra);
+                    if (!convertirEntero(inicioPalabra, trauma))
+                        lineaValida = false;
                     break;
                 case 8:
-                    sintomas = stoi(inicioPalabra);
+                    if (!convertirEntero(inicioPalabra, sintomas))
+                        lineaValida = false;
                     break;
                 case 9:
-                    cirugia = stoi(inicioPalabra);
+                    if (!convertirEntero(inicioPalabra, cirugia))
+                        lineaValida = false;
                     break;
                 default:
-                    cout<<"Algo salió mal en el switch.."<<endl;
+                    lineaValida = false;
                     break;
                 }
 
@@ -76,10 +152,23 @@ int main(int argc, char const *argv[])
         
             
         }
-        dias = stoi(inicioPalabra);//donde quedo el puntero al final.. ya que no tiene ;
+        if (!convertirEntero(inicioPalabra, dias))
+            lineaValida = false;
 
-        Paciente* nuevoPaciente = new Paciente(id, nombre, edad, temperatura, presion, dolor, tipoDolor, trauma, sintomas, cirugia, dias);
-        filaPacientes.ingresar(nuevoPaciente);
+        if (lineaValida)
+        {
+            Paciente* nuevoPaciente = new Paciente(
+                id, nombre, edad, temperatura, presion,
+                dolor, tipoDolor, trauma, sintomas,
+                cirugia, dias
+            );
+
+            filaPacientes.ingresar(nuevoPaciente);
+        }
+        else
+        {
+            cout << "Linea invalida ignorada: datos numericos incorrectos." << endl;
+        }
     }
     archivo.close();
 
