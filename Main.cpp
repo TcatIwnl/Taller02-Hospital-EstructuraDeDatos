@@ -6,6 +6,55 @@
 #include "Hospital.hpp"
 using namespace std;
 
+bool textoConContenido(const string& texto)
+{
+    for (size_t i = 0; i < texto.size(); i++)
+    {
+        if (texto[i] != ' ' && texto[i] != '\t' && texto[i] != '\r')
+            return true;
+    }
+    return false;
+}
+
+bool tipoDolorValido(const string& tipo)
+{
+    return tipo == "pecho" ||
+           tipo == "cabeza" ||
+           tipo == "abdomen" ||
+           tipo == "extremidad" ||
+           tipo == "otro";
+}
+
+bool datosClinicosValidos(
+    const string& id, const string& nombre, int edad,
+    float temperatura, int presion, int dolor,
+    const string& tipoDolor, int trauma, int sintomas,
+    int cirugia, int dias)
+{
+    if (!textoConContenido(id) || !textoConContenido(nombre))
+        return false;
+    if (edad < 0 || edad > 120)
+        return false;
+    if (temperatura < 30.0f || temperatura > 45.0f)
+        return false;
+    if (presion < 40 || presion > 260)
+        return false;
+    if (dolor < 0 || dolor > 10)
+        return false;
+    if (!tipoDolorValido(tipoDolor))
+        return false;
+    if (trauma != 0 && trauma != 1)
+        return false;
+    if (sintomas != 0 && sintomas != 1)
+        return false;
+    if (cirugia != 0 && cirugia != 1)
+        return false;
+    if (dias < 0)
+        return false;
+
+    return true;
+}
+
 bool convertirEntero(string texto, int& resultado)
 {
     try
