@@ -2,6 +2,7 @@
 #include "ArbolDecision.hpp"
 #include <iostream>
 using namespace std;
+#include <stdexcept>
 
 ArbolDecision::ArbolDecision()
 {
@@ -141,4 +142,72 @@ int ArbolDecision::contarHojasDesde(
 int ArbolDecision::contarServicios() const
 {
     return contarHojasDesde(raiz);
+}
+
+
+bool ArbolDecision::evaluarPregunta(
+    const string& pregunta, Paciente* paciente) const
+{
+    if (pregunta == "Edad < 14")
+        return paciente->getEdad() < 14;
+
+    if (pregunta == "Trauma == 1")
+        return paciente->getTrauma() == 1;
+
+    if (pregunta == "RequiereCirugia == 1")
+        return paciente->getCirugia() == 1;
+
+    if (pregunta == "SintomasNeurologicos == 1")
+        return paciente->getSintomas() == 1;
+
+    if (pregunta == "TipoDolor == pecho")
+        return paciente->getTipoDolor() == "pecho";
+
+    if (pregunta == "Temperatura >= 38.5 o Dolor >= 8")
+        return paciente->getTemperatura() >= 38.5f
+            || paciente->getDolor() >= 8;
+
+    if (pregunta == "DiasHospitalizacion >= 2")
+        return paciente->getDias() >= 2;
+
+    throw logic_error("Pregunta no reconocida: " + pregunta);
+}
+
+string ArbolDecision::clasificarPaciente(
+    Paciente* paciente, string& ruta) const
+{
+    ruta.clear();
+
+    if (paciente == nullptr)
+        return "";
+
+    NodoPregunta* actual = raiz;
+
+    while (actual != nullptr && !actual->esServicioFinal())
+    {
+        bool respuesta = evaluarPregunta(
+            actual->getTexto(), paciente
+        );
+
+        if (!ruta.empty())
+            ruta += " -> ";
+
+        ruta += actual->getTexto();
+        ruta += respuesta ? " [Si]" : " [No]";
+
+        if (respuesta)
+            actual = actual->getHijoSi();
+        else
+            actual = actual->getHijoNo();
+    }
+
+    if (actual == nullptr)
+        throw logic_error("Arbol de decision incompleto");
+
+    if (!ruta.empty())
+        ruta += " -> ";
+
+    ruta += actual->getTexto();
+
+    return actual->getTexto();
 }

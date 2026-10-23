@@ -1,6 +1,7 @@
 
 #pragma once
 #include "NodoPregunta.hpp"
+#include "Paciente.hpp"
 
 class ArbolDecision {
 private:
@@ -13,6 +14,8 @@ private:
 
     // Cuenta los servicios finales del arbol
     int contarHojasDesde(NodoPregunta* nodo) const;
+
+    bool evaluarPregunta(const string& pregunta, Paciente* paciente) const;
 
 public:
     ArbolDecision();
@@ -27,4 +30,6 @@ public:
     void mostrarPostorden() const;
 
     int contarServicios() const;
+
+    string clasificarPaciente(Paciente* paciente, string& ruta) const;
 };
