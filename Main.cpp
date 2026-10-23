@@ -4,6 +4,7 @@
 #include "ColaPacientes.hpp"
 #include "Seccion.hpp"
 #include "Hospital.hpp"
+#include <cmath>
 using namespace std;
 
 bool textoConContenido(const string& texto)
@@ -35,7 +36,9 @@ bool datosClinicosValidos(
         return false;
     if (edad < 0 || edad > 120)
         return false;
-    if (temperatura < 30.0f || temperatura > 45.0f)
+    if (!std::isfinite(temperatura) ||
+        temperatura < 30.0f ||
+        temperatura > 45.0f)
         return false;
     if (presion < 40 || presion > 260)
         return false;
@@ -204,6 +207,23 @@ int main(int argc, char const *argv[])
         if (!convertirEntero(inicioPalabra, dias))
             lineaValida = false;
 
+        if (lineaValida && !datosClinicosValidos(
+            id, nombre, edad, temperatura, presion,
+            dolor, tipoDolor, trauma, sintomas,
+            cirugia, dias))
+        {
+            lineaValida = false;
+        }
+
+        
+        if (lineaValida && filaPacientes.existePaciente(id))
+        {
+            cout << "Paciente duplicado ignorado. ID: "
+                << id << endl;
+            continue;
+        }
+
+
         if (lineaValida)
         {
             Paciente* nuevoPaciente = new Paciente(
@@ -216,7 +236,7 @@ int main(int argc, char const *argv[])
         }
         else
         {
-            cout << "Linea invalida ignorada: datos numericos incorrectos." << endl;
+            cout << "Linea invalida ignorada: datos incorrectos." << endl;
         }
     }
     archivo.close();
