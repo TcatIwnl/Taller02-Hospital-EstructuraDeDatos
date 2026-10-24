@@ -129,3 +129,71 @@ NodoAVL* ArbolAVL::rotarIzquierda(NodoAVL* nodo)
 
     return nuevaRaiz;
 }
+NodoAVL* ArbolAVL::rotarIqDer(NodoAVL* nodo){
+    nodo->setIzq(rotarIzquierda(nodo->getIzq()));//primero a la izquierda el hijo
+    return rotarDerecha(nodo); //luego lo rotamos a la derecha
+}
+NodoAVL* ArbolAVL::rotarDerIq(NodoAVL* nodo){
+    nodo->setDer(rotarDerecha(nodo->getDer()));
+    return rotarIzquierda(nodo);
+}
+
+void ArbolAVL::insertar(Paciente* paciente){
+    this->raiz = insertarNodo(this->raiz, paciente);
+}
+
+NodoAVL* ArbolAVL::insertarNodo(NodoAVL* nodo, Paciente* paciente){
+    if (nodo == nullptr) {
+        return new NodoAVL(paciente);
+    }
+
+    if (paciente->getId() < nodo->getPaciente()->getId()) {
+        nodo->setIzq(insertarNodo(nodo->getIzq(), paciente));
+    }
+    else if (paciente->getId() > nodo->getPaciente()->getId()) {
+        nodo->setDer(insertarNodo(nodo->getDer(), paciente));
+    }
+    else {
+        //no lo ingresamos..
+        return nodo; 
+    }
+
+    actualizarAltura(nodo);
+    int balance = factorBalance(nodo);
+
+    if (balance > 1 && paciente->getId() < nodo->getIzq()->getPaciente()->getId())
+        return rotarDerecha(nodo);
+    
+    if (balance < -1 && paciente->getId() > nodo->getDer()->getPaciente()->getId())
+        return rotarIzquierda(nodo);
+
+    if (balance > 1 && paciente->getId() > nodo->getIzq()->getPaciente()->getId())
+        return rotarIqDer(nodo);
+    
+    if (balance < -1 && paciente->getId() < nodo->getDer()->getPaciente()->getId())
+        return rotarDerIq(nodo);
+
+    return nodo;
+}
+
+Paciente* ArbolAVL::buscar(string id){
+    return buscarNodo(this->raiz, id);
+}
+
+Paciente* ArbolAVL::buscarNodo(NodoAVL* nodo, string id)
+{
+    if (nodo == nullptr) {
+        return nullptr; //No se encontró..
+    }
+    
+    //Búsqueda binaria ultra rapida..
+    if (id < nodo->getPaciente()->getId()) {
+        return buscarNodo(nodo->getIzq(), id);
+    } 
+    else if (id > nodo->getPaciente()->getId()) {
+        return buscarNodo(nodo->getDer(), id);
+    } 
+    else {
+        return nodo->getPaciente(); //Encontrado
+    }
+}
