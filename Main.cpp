@@ -266,20 +266,29 @@ int main(int argc, char const *argv[])
         cout << "4. Salir" << endl;
         cout<<""<<endl;
         cout << "Seleccionar opcion: ";
+        string entradaOpcion;
+        getline(cin, entradaOpcion);
 
-        cin >> opcion; //Leemos la opción..
-        cin.ignore();
+        if (!convertirEntero(entradaOpcion, opcion)) {//ocupamos la funcion que creamos para evitar errores de input..
+            opcion = -1; 
+        }
 
         switch (opcion)
         {
         case 1:{//si sacas estas llaves explota todo..
             int cantidadP = 0;
-            filaPacientes.mostrarCola();//ARREGLAR EL OUTPUT, QUE SE VEA TAL COMO EN EL EJ DEL TALLER
-            cout<<""<<endl;
-            cout<<"Ingrese la cantidad de pacientes a atender.."<<endl;
-            cin >> cantidadP;
-            //ocupamos el metodo atenderPacientes..
-            hospital.atenderPacientes(filaPacientes,cantidadP);
+            filaPacientes.mostrarCola();
+            cout << "\nIngrese la cantidad de pacientes a atender: ";
+            
+            string entradaCantidad;
+            getline(cin, entradaCantidad);
+            
+            if (!convertirEntero(entradaCantidad, cantidadP)) {
+                cout << "Debe ingresar un numero valido." << endl;
+                break; //vuelve al menú
+            }
+
+            hospital.atenderPacientes(filaPacientes, cantidadP);
             break;
         }
         case 2:{
@@ -287,7 +296,7 @@ int main(int argc, char const *argv[])
             hospital.mostrarSecciones();//ARREGLAR EL FORMATO DEL OUTPUT TAMBIEN..
             cout<<""<<endl;
             cout << "Selecciona una opcion: "<<endl;
-            cin >> opcionSeccion;
+            cin >> opcionSeccion; //no es necesario validar porque entra en el switch
 
             string nombreBusqueda = "";
             switch (opcionSeccion) {
@@ -316,7 +325,45 @@ int main(int argc, char const *argv[])
             break;
         }
         case 3:{
+            cout << "\n=== BUSCAR PACIENTE ===" << endl;
+            cout << "Indique el ID o Nombre del paciente: ";
+            string criterio;
+            getline(cin, criterio);
 
+            if (!textoConContenido(criterio)) {
+                cout << "busqueda invalida.." << endl;
+                break;
+            }
+
+            cout << "Buscando..." << endl;
+            
+            //busqueda en la cola de espera
+            Paciente* pEncontrado = filaPacientes.buscarPaciente(criterio);
+            
+            if (pEncontrado != nullptr) {
+                cout << "\nPaciente encontrado en: COLA DE ESPERA (Sin asignar)" << endl;
+                cout << "ID: " << pEncontrado->getId() << " | Nombre: " << pEncontrado->getNombre() << endl;
+                cout << "Edad: " << pEncontrado->getEdad() << " | Trauma: " << (pEncontrado->getTrauma() ? "Si" : "No") << endl;
+            } 
+            else {
+                //busqueda en los AVL de los 8 secciones
+                string departamentoAsignado = "";
+                pEncontrado = hospital.buscarPacienteEnHospital(criterio, departamentoAsignado);
+
+                if (pEncontrado != nullptr) {
+                    cout << "\n[!] Paciente encontrado en: " << departamentoAsignado << endl;
+                    cout << "ID: " << pEncontrado->getId() << endl;
+                    cout << "Nombre: " << pEncontrado->getNombre() << endl;
+                    cout << "Edad: " << pEncontrado->getEdad() << endl;
+                    cout << "Temperatura: " << pEncontrado->getTemperatura() << " | Presion: " << pEncontrado->getPresion() << endl;
+                    cout << "Dolor: " << pEncontrado->getDolor() << " | Tipo Dolor: " << pEncontrado->getTipoDolor() << endl;
+                    cout << "Trauma: " << (pEncontrado->getTrauma() ? "Si" : "No") << " | Cirugia: " << (pEncontrado->getCirugia() ? "Si" : "No") << endl;
+                    cout << "Sintomas Neuro: " << (pEncontrado->getSintomas() ? "Si" : "No") << endl;
+                    cout << "Dias Hosp.: " << pEncontrado->getDias() << endl;
+                } else {
+                    cout << "\nPaciente no encontrado en el sistema.." << endl;
+                }
+            }
             break;
         }
             

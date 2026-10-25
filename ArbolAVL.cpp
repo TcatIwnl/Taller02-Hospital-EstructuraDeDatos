@@ -256,7 +256,7 @@ NodoAVL* ArbolAVL::eliminarNodo(NodoAVL* nodo, string id, bool liberarPaciente)
     }
     else
     {
-        // Caso 1 y 2: nodo hoja o con un solo hijo
+        // Caso 1 y 2 nodo hoja o con un solo hijo
         if (nodo->getIzq() == nullptr || nodo->getDer() == nullptr)
         {
             NodoAVL* hijo = (nodo->getIzq() != nullptr) ? nodo->getIzq() : nodo->getDer();
@@ -268,7 +268,7 @@ NodoAVL* ArbolAVL::eliminarNodo(NodoAVL* nodo, string id, bool liberarPaciente)
             delete nodo;
             return hijo;
         }
-        // Caso 3: nodo con dos hijos
+        //nodo con dos hijos
         else
         {
             NodoAVL* sucesor = obtenerNodoMinimo(nodo->getDer());
@@ -278,7 +278,7 @@ NodoAVL* ArbolAVL::eliminarNodo(NodoAVL* nodo, string id, bool liberarPaciente)
             }
             // Copiamos el puntero del sucesor al nodo actual
             nodo->setPaciente(sucesor->getPaciente());
-            // Eliminamos el nodo sucesor sin borrar su Paciente* (porque ahora vive en 'nodo')
+            
             nodo->setDer(eliminarNodo(nodo->getDer(), sucesor->getPaciente()->getId(), false));
         }
     }
@@ -306,7 +306,7 @@ void ArbolAVL::inordenRecursivo(NodoAVL* nodo) {
     if (nodo != nullptr) {
         inordenRecursivo(nodo->getIzq());
         
-        //imprimimos sus datos, incluyendo Altura y Factor de Balance como pide la rúbrica)
+        //imprimimos sus datos
         cout << "ID: " << nodo->getPaciente()->getId() 
              << " - " << nodo->getPaciente()->getNombre() 
              << " (altura:" << nodo->getAltura() 
