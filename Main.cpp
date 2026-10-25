@@ -296,7 +296,13 @@ int main(int argc, char const *argv[])
             hospital.mostrarSecciones();//ARREGLAR EL FORMATO DEL OUTPUT TAMBIEN..
             cout<<""<<endl;
             cout << "Selecciona una opcion: "<<endl;
-            cin >> opcionSeccion; //no es necesario validar porque entra en el switch
+            string entradaSeccion;
+            getline(cin, entradaSeccion); //esto arregla el error de antes..
+
+            if (!convertirEntero(entradaSeccion, opcionSeccion)) {
+                cout << "Opcion invalida. Debes ingresar un numero." << endl;
+                break; 
+            }
 
             string nombreBusqueda = "";
             switch (opcionSeccion) {
@@ -310,7 +316,6 @@ int main(int argc, char const *argv[])
                 case 8: nombreBusqueda = "Hospitalizacion"; break;
                 default: cout << "Opcion no valida." << endl; break;
             }
-            //acca tenemos que convertir la opcion a string del nombre de la seccion elegida..
             
             if (nombreBusqueda != "") { 
                 Seccion* sec = hospital.buscarSeccion(nombreBusqueda);
@@ -321,7 +326,6 @@ int main(int argc, char const *argv[])
                     cout << "Departamento no encontrado." << endl;
                 }
             }
-
             break;
         }
         case 3:{
@@ -351,7 +355,7 @@ int main(int argc, char const *argv[])
                 pEncontrado = hospital.buscarPacienteEnHospital(criterio, departamentoAsignado);
 
                 if (pEncontrado != nullptr) {
-                    cout << "\n[!] Paciente encontrado en: " << departamentoAsignado << endl;
+                    cout << "\nPaciente encontrado en: " << departamentoAsignado << endl;
                     cout << "ID: " << pEncontrado->getId() << endl;
                     cout << "Nombre: " << pEncontrado->getNombre() << endl;
                     cout << "Edad: " << pEncontrado->getEdad() << endl;
