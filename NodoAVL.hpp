@@ -21,4 +21,5 @@ public:
     void setIzq(NodoAVL* nodo);
     void setDer(NodoAVL* nodo);
     void setAltura(int nuevaAltura);
+    void setPaciente(Paciente* nuevoPaciente);
 };

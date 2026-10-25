@@ -204,54 +204,100 @@ NodoAVL* ArbolAVL::obtenerNodoMinimo(NodoAVL* nodo) {
     return actual;
 }
 
-void ArbolAVL::eliminar(string id) {
-    this->raiz = eliminarNodo(this->raiz, id);
+int ArbolAVL::contarPacientes()
+{
+    return contarNodos(this->raiz);
 }
 
-NodoAVL* ArbolAVL::eliminarNodo(NodoAVL* nodo, string id) {
-    if (nodo == nullptr) return nodo;
+int ArbolAVL::contarNodos(NodoAVL* nodo)
+{
+    if (nodo == nullptr)
+        return 0;
+    return 1 + contarNodos(nodo->getIzq()) + contarNodos(nodo->getDer());
+}
 
-    if (id < nodo->getPaciente()->getId()) {
-        nodo->setIzq(eliminarNodo(nodo->getIzq(), id));
-    } 
-    else if (id > nodo->getPaciente()->getId()) {
-        nodo->setDer(eliminarNodo(nodo->getDer(), id));
-    } 
-    else {
-        if (nodo->getIzq() == nullptr || nodo->getDer() == nullptr) {
-            NodoAVL* temp = nodo->getIzq() ? nodo->getIzq() : nodo->getDer();
-            if (temp == nullptr) {
-                temp = nodo;
-                nodo = nullptr;
-            } else {
-                *nodo = *temp; 
+Paciente* ArbolAVL::buscarPorNombre(const string& nombre)
+{
+    return buscarNombreNodo(this->raiz, nombre);
+}
+
+Paciente* ArbolAVL::buscarNombreNodo(NodoAVL* nodo, const string& nombre)
+{
+    if (nodo == nullptr)
+        return nullptr;
+
+    if (nodo->getPaciente()->getNombre() == nombre)
+        return nodo->getPaciente();
+
+    Paciente* encontradoIzq = buscarNombreNodo(nodo->getIzq(), nombre);
+    if (encontradoIzq != nullptr)
+        return encontradoIzq;
+
+    return buscarNombreNodo(nodo->getDer(), nombre);
+}
+
+void ArbolAVL::eliminar(string id)
+{
+    this->raiz = eliminarNodo(this->raiz, id, true);
+}
+
+NodoAVL* ArbolAVL::eliminarNodo(NodoAVL* nodo, string id, bool liberarPaciente)
+{
+    if (nodo == nullptr)
+        return nullptr;
+
+    if (id < nodo->getPaciente()->getId())
+    {
+        nodo->setIzq(eliminarNodo(nodo->getIzq(), id, liberarPaciente));
+    }
+    else if (id > nodo->getPaciente()->getId())
+    {
+        nodo->setDer(eliminarNodo(nodo->getDer(), id, liberarPaciente));
+    }
+    else
+    {
+        // Caso 1 y 2: nodo hoja o con un solo hijo
+        if (nodo->getIzq() == nullptr || nodo->getDer() == nullptr)
+        {
+            NodoAVL* hijo = (nodo->getIzq() != nullptr) ? nodo->getIzq() : nodo->getDer();
+
+            if (liberarPaciente)
+            {
+                delete nodo->getPaciente();
             }
-            temp->setIzq(nullptr);
-            temp->setDer(nullptr);
-            delete temp;
-        } else {
-            NodoAVL* temp = obtenerNodoMinimo(nodo->getDer());
-            // Requiere setPaciente en NodoAVL.hpp si quieres evitar tocar atributos internos. 
-            // Para simplicidad estructural sin setPaciente extra:
-            Paciente* pTemp = nodo->getPaciente();
-            // Si el compilador te exige setPaciente, simplemente decláralo en NodoAVL y úsalo aquí.
-            
-            nodo->setDer(eliminarNodo(nodo->getDer(), temp->getPaciente()->getId()));
+            delete nodo;
+            return hijo;
+        }
+        // Caso 3: nodo con dos hijos
+        else
+        {
+            NodoAVL* sucesor = obtenerNodoMinimo(nodo->getDer());
+            if (liberarPaciente)
+            {
+                delete nodo->getPaciente();
+            }
+            // Copiamos el puntero del sucesor al nodo actual
+            nodo->setPaciente(sucesor->getPaciente());
+            // Eliminamos el nodo sucesor sin borrar su Paciente* (porque ahora vive en 'nodo')
+            nodo->setDer(eliminarNodo(nodo->getDer(), sucesor->getPaciente()->getId(), false));
         }
     }
 
-    if (nodo == nullptr) return nodo;
-
     actualizarAltura(nodo);
-    int balance = factorBalance(nodo); //ocupamos el metodo que creamos..
+    int balance = factorBalance(nodo);
 
-    if (balance > 1 && factorBalance(nodo->getIzq()) >= 0) return rotarDerecha(nodo);
-    if (balance > 1 && factorBalance(nodo->getIzq()) < 0) return rotarIqDer(nodo);
-    if (balance < -1 && factorBalance(nodo->getDer()) <= 0) return rotarIzquierda(nodo);
-    if (balance < -1 && factorBalance(nodo->getDer()) > 0) return rotarDerIq(nodo);
+    if (balance > 1 && factorBalance(nodo->getIzq()) >= 0)
+        return rotarDerecha(nodo);
+    if (balance > 1 && factorBalance(nodo->getIzq()) < 0)
+        return rotarIqDer(nodo);
+    if (balance < -1 && factorBalance(nodo->getDer()) <= 0)
+        return rotarIzquierda(nodo);
+    if (balance < -1 && factorBalance(nodo->getDer()) > 0)
+        return rotarDerIq(nodo);
 
     return nodo;
 }
+
 void ArbolAVL::mostrarInorden() { 
     inordenRecursivo(this->raiz); 
 }

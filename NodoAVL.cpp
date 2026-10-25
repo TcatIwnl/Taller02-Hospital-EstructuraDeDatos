@@ -47,3 +47,7 @@ void NodoAVL::setAltura(int nuevaAltura)
 {
     this->altura = nuevaAltura;
 }
+void NodoAVL::setPaciente(Paciente* nuevoPaciente)
+{
+    this->paciente = nuevoPaciente;
+}
