@@ -138,9 +138,29 @@ NodoAVL* ArbolAVL::rotarDerIq(NodoAVL* nodo){
     return rotarIzquierda(nodo);
 }
 
-void ArbolAVL::insertar(Paciente* paciente){
+
+void ArbolAVL::insertar(Paciente* paciente)
+{
+    if (paciente == nullptr)
+    {
+        return;
+    }
+
+    Paciente* existente = buscar(paciente->getId());
+
+    if (existente != nullptr)
+    {
+        if (existente != paciente)
+        {
+            delete paciente;
+        }
+
+        return;
+    }
+
     this->raiz = insertarNodo(this->raiz, paciente);
 }
+
 
 NodoAVL* ArbolAVL::insertarNodo(NodoAVL* nodo, Paciente* paciente){
     if (nodo == nullptr) {

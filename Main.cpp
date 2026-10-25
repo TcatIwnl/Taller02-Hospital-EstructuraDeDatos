@@ -5,6 +5,7 @@
 #include "Seccion.hpp"
 #include "Hospital.hpp"
 #include <cmath>
+#include <limits>
 using namespace std;
 
 bool textoConContenido(const string& texto)
@@ -105,7 +106,22 @@ int main()
         return 1;
     }
     char linea[500]; //array de caracteres para la linea..
-    while(archivo.getline(linea,500)){
+    while(true){
+        
+        if (!archivo.getline(linea, 500))
+            {
+                if (archivo.eof())
+                {
+                    break;
+                }
+
+                archivo.clear();
+                archivo.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                cout << "Linea invalida ignorada: demasiado larga." << endl;
+                continue;
+            }
+        
         char* puntero = linea; //puntero que recorre la linea..
         char* inicioPalabra = linea; //se queda al principio sin avanzar..
 
@@ -267,7 +283,10 @@ int main()
         cout<<""<<endl;
         cout << "Seleccionar opcion: ";
         string entradaOpcion;
-        getline(cin, entradaOpcion);
+        if (!getline(cin, entradaOpcion))
+        {
+            break;
+        }
 
         if (!convertirEntero(entradaOpcion, opcion)) {//ocupamos la funcion que creamos para evitar errores de input..
             opcion = -1; 
