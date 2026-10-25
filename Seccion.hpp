@@ -1,17 +1,27 @@
 #pragma once
 #include <string>
 #include <iostream>
-#include "NodoPaciente.hpp"
+#include "ArbolAVL.hpp"
+
+using namespace std;
 
 class Seccion
 {
 private:
-    NodoPaciente* cabecera;
+    ArbolAVL arbolPacientes;
     string nombre;
+
 public:
     Seccion(string nombre);
-    string getNombre();
-    void ingresarPaciente(Paciente* p);  
-    void mostrarEstado();
     ~Seccion();
+
+    string getNombre();
+    void ingresarPaciente(Paciente* p);
+    Paciente* buscarPacientePorId(const string& id);
+    Paciente* buscarPacientePorNombre(const string& nombre);
+    void eliminarPacientePorId(const string& id);
+    bool estaVacia();
+    int cantidadPacientes();
+    int alturaAVL();
+    void mostrarEstado();
 };

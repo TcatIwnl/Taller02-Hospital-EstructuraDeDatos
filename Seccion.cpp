@@ -1,68 +1,74 @@
 #include "Seccion.hpp"
 
-Seccion::Seccion(string nombre){ // al parecer no es necesario incluir el <string>, ya que importamos Seccion.hpp
+Seccion::Seccion(string nombre)
+{
     this->nombre = nombre;
-    this->cabecera = nullptr;
-}
-
-string Seccion::getNombre(){return this->nombre;}
-
-
-void Seccion::mostrarEstado(){
-    cout << "=== ESTADO " << this->nombre << " ===" << endl;
-    
-    if (this->cabecera == nullptr) {
-        cout << "No hay pacientes en este departamento." << endl;
-        return;
-    }
-    NodoPaciente* nodoActual = this->cabecera; // o solo cabecera??
-    int contador = 0;
-    while (nodoActual != nullptr)
-    {
-        contador++;
-        nodoActual = nodoActual->getSgte();
-    }
-    cout << "Pacientes en el departamento de " << this->nombre << ": " << contador << endl;
-
-    nodoActual = this->cabecera; // Reiniciamos el cursor al inicio
-    while (nodoActual != nullptr) {
-        Paciente* p = nodoActual->getPaciente();
-        cout << "- " << p->getNombre() << " (" << p->getEdad() << ")" << endl;
-        nodoActual = nodoActual->getSgte();
-    }
-    
-
-}
-
-void Seccion::ingresarPaciente(Paciente* p){
-    NodoPaciente* nuevoNodo = new NodoPaciente(p);
-    
-    // Si la lista está vacía, el nuevo nodo es la cabecera
-    if (this->cabecera == nullptr) {
-        this->cabecera = nuevoNodo;
-    } else {
-        // Si no está vacía, recorremos hasta el final y lo agregamos
-        NodoPaciente* nodoActual = this->cabecera;
-        while (nodoActual->getSgte() != nullptr) {
-            nodoActual = nodoActual->getSgte();
-        }
-        nodoActual->setSgte(nuevoNodo);
-    }
 }
 
 Seccion::~Seccion()
 {
-    NodoPaciente* nodoActual = this->cabecera;
+    // El destructor de ArbolAVL libera sus nodos y pacientes automaticamente
+}
 
-    while (nodoActual != nullptr)
+string Seccion::getNombre()
+{
+    return this->nombre;
+}
+
+void Seccion::ingresarPaciente(Paciente* p)
+{
+    this->arbolPacientes.insertar(p);
+}
+
+Paciente* Seccion::buscarPacientePorId(const string& id)
+{
+    return this->arbolPacientes.buscar(id);
+}
+
+Paciente* Seccion::buscarPacientePorNombre(const string& nombre)
+{
+    return this->arbolPacientes.buscarPorNombre(nombre);
+}
+
+void Seccion::eliminarPacientePorId(const string& id)
+{
+    this->arbolPacientes.eliminar(id);
+}
+
+bool Seccion::estaVacia()
+{
+    return this->arbolPacientes.estaVacio();
+}
+
+int Seccion::cantidadPacientes()
+{
+    return this->arbolPacientes.contarPacientes();
+}
+
+int Seccion::alturaAVL()
+{
+    return this->arbolPacientes.alturaArbol();
+}
+
+void Seccion::mostrarEstado()
+{
+    cout << "=== ESTADO " << this->nombre << " ===" << endl;
+
+    if (this->arbolPacientes.estaVacio())
     {
-        NodoPaciente* siguiente = nodoActual->getSgte();
-
-        delete nodoActual->getPaciente();
-        delete nodoActual;
-
-        nodoActual = siguiente;
+        cout << "Sin pacientes" << endl;
+        return;
     }
 
-    this->cabecera = nullptr;
+    cout << "Pacientes en " << this->nombre << ": " << cantidadPacientes()
+         << " (Altura AVL: " << alturaAVL() << ")" << endl;
+
+    cout << "\n-- Recorrido Inorden (con altura y factor de balance) --" << endl;
+    this->arbolPacientes.mostrarInorden();
+
+    cout << "\n-- Recorrido Preorden --" << endl;
+    this->arbolPacientes.mostrarPreorden();
+
+    cout << "\n-- Recorrido Postorden --" << endl;
+    this->arbolPacientes.mostrarPostorden();
 }
