@@ -45,17 +45,33 @@ Seccion* Hospital::buscarSeccion(string nombre)
     return nullptr;
 }
 
-void Hospital::mostrarSecciones(){
-    cout << "=== DEPARTAMENTOS/SECCIONES ===" << endl;
-    NodoSeccion* nodoActual = this->cabecera;
-    int contador = 1;//lo mismo que en la fila de pacientes..
 
-    while (nodoActual != nullptr) {
-        cout << contador << ". " << nodoActual->getSeccion()->getNombre() << endl;
+void Hospital::mostrarSecciones()
+{
+    cout << "\n=== ESTADO GENERAL DE LOS DEPARTAMENTOS ===" << endl;
+
+    NodoSeccion* nodoActual = this->cabecera;
+    int contador = 1;
+
+    while (nodoActual != nullptr)
+    {
+        Seccion* seccionActual = nodoActual->getSeccion();
+
+        cout << contador << ". " << seccionActual->getNombre();
+
+        if (seccionActual->estaVacia())
+        {
+            cout << " - Sin pacientes" << endl;
+        }
+        else
+        {
+            cout << " - Pacientes: "
+                 << seccionActual->cantidadPacientes() << endl;
+        }
+
         nodoActual = nodoActual->getSgte();
         contador++;
     }
-
 }
 
 void Hospital::atenderPacientes(ColaPacientes& cola, int cantidad)

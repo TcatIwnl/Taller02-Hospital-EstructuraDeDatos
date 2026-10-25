@@ -96,7 +96,7 @@ bool convertirDecimal(string texto, float& resultado)
     }
 }
 
-int main(int argc, char const *argv[])
+int main()
 {
     ColaPacientes filaPacientes;
     ifstream archivo("pacientes.txt");
@@ -259,10 +259,10 @@ int main(int argc, char const *argv[])
 
     do
     {
-        cout<<"=== HOSPITAL PAMPILLA ==="<<endl;
+        cout << "=== HOSPITAL MARMAJA ===" << endl;
         cout << "1. Atender pacientes" << endl;
         cout << "2. Ver departamento" << endl;
-        cout << "3. Revisar historial de atencion" << endl;
+        cout << "3. Buscar paciente" << endl;
         cout << "4. Salir" << endl;
         cout<<""<<endl;
         cout << "Seleccionar opcion: ";
